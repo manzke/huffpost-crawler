@@ -9,7 +9,6 @@ The robots.txt tells you where to find the sitemap.xml and if a robot is allowed
 
 Your crawler should respect them to not read old content, privacy reasons, etc.
 
-
 What does our crawler do?
 - it loads the robots.txt
 - detects the sitemaps
@@ -18,6 +17,8 @@ What does our crawler do?
 - which can be either another sitemap or a url
 - we are loading each sitemap
 - storing every url which is an entry as well as the skipped ones
+
+This led to 1,121,569 unique links for new entries.
 
 ## robots.txt
 
@@ -32,6 +33,7 @@ Also take the Crawl-delay into account, which tells you how much time should be 
 
 Example robots.txt from huffpost.com
 
+```
 # Cambria robots
 
 User-agent: grapeshot
@@ -71,3 +73,4 @@ Sitemap: https://www.huffpost.com/sitemaps/sections.xml
 # huffingtonpost.com archive sitemaps
 Sitemap: https://www.huffpost.com/sitemaps-huffingtonpost/sitemap.xml
 Sitemap: https://www.huffpost.com/sitemaps-huffingtonpost/sections.xml
+``` 
