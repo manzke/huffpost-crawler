@@ -7,12 +7,17 @@ from datetime import datetime, timezone
 # Function to extract full text and metadata from a news article URL
 def extract_full_text_and_metadata(url):
     try:
-        response = requests.get(url)
+        id = url.split('_')[-1]
+        response = requests.get(url, allow_redirects=False)
+        if response.status_code == 301 or response.status_code == 302:
+            raise requests.RequestException("Redirect detected. Please check the URL.")
         response.raise_for_status()  # Check if the request was successful
+        # print(f"Response code: {response.status_code}")
+        # print(f"Response URL: {response.url}")
+        # print(f"Response content: {response.content}")
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # example url https://www.huffingtonpost.com/entry/the-limitless-potential-o_us_3526935
-        id = url.split('_')[-1]
 
         # Extract metadata from the head tag
         metadata = {
@@ -104,12 +109,21 @@ def extract_full_text_and_metadata(url):
         return article_text.strip(), metadata, id
     except requests.RequestException as e:
         print(f"Error fetching URL {url}: {e}")
-        return None, None    
+        with open(error_file_path, 'a') as errorfile:
+            result = {
+                'id': id,
+                'link': url,
+                'message': f"Error fetching URL {url}: {e}"
+            }
+            json.dump(result, errorfile)
+            errorfile.write('\n')
+        return None, None, None    
 
 # Read the JSON lines from the file
-file_path = 'unique_links-test-1.json'
+file_path = 'unique_links-2024-05-28.json'
 
 # Open the output file in append mode
+error_file_path = 'articles-errors-'+file_path
 output_file_path = 'articles-'+file_path
 with open(output_file_path, 'a') as outfile:
     with open(file_path, 'r') as file:
@@ -122,6 +136,12 @@ with open(output_file_path, 'a') as outfile:
                 data = json.loads(line)
                 processed_links.add(data['link'])
 
+    if os.path.exists(error_file_path):
+        with open(error_file_path, 'r') as errorfile:
+            for line in errorfile:
+                data = json.loads(line)
+                processed_links.add(data['link'])            
+
     filtered_json_lines = [line for line in json_lines if json.loads(line)['link'] not in processed_links]
     print(f"Filtered {len(json_lines) - len(filtered_json_lines)} duplicate articles")
 
@@ -129,7 +149,7 @@ with open(output_file_path, 'a') as outfile:
     for i, line in enumerate(filtered_json_lines):
         data = json.loads(line)
         url = data['link']
-
+        print(f"Processing URL: {url}")
         full_text, metadata, id = extract_full_text_and_metadata(url)
         
         if full_text:
@@ -153,6 +173,6 @@ with open(output_file_path, 'a') as outfile:
             outfile.write('\n')
         
         # Print progress
-        print(f"Processed {i + 1}/{total_lines} lines")
+        print(f"Processed {i + 1}/{total_lines} lines. Last {url}")
 
 print(f"Articles have been saved to {output_file_path}")
