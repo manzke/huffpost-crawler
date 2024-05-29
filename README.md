@@ -74,3 +74,20 @@ Sitemap: https://www.huffpost.com/sitemaps/sections.xml
 Sitemap: https://www.huffpost.com/sitemaps-huffingtonpost/sitemap.xml
 Sitemap: https://www.huffpost.com/sitemaps-huffingtonpost/sections.xml
 ``` 
+
+Inspired by
+@article{misra2019sarcasm,
+  title={Sarcasm Detection using Hybrid Neural Network},
+  author={Misra, Rishabh and Arora, Prahal},
+  journal={arXiv preprint arXiv:1908.07414},
+  year={2019}
+}
+
+@book{misra2021sculpting,
+  author = {Misra, Rishabh and Grover, Jigyasa},
+  year = {2021},
+  month = {01},
+  pages = {},
+  title = {Sculpting Data for ML: The first act of Machine Learning},
+  isbn = {9798585463570}
+}
